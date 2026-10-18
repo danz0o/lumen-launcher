@@ -1,0 +1,32 @@
+name: Build and Release Windows App
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build-tauri:
+    permissions:
+      contents: write
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Tauri App & Upload to Release
+        uses: tauri-apps/tauri-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
